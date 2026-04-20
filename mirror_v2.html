@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE MIRROR — Every Reader, A Different Truth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1208; --ink-mid: #3d3020; --ink-light: #6b5c45; --ink-faint: #b8a99a;
+  --paper: #f5f0e8; --paper-warm: #ede8dc; --paper-dark: #d9d0be;
+  --accent: #8b1a1a; --accent-pale: #f9f0f0;
+  --reveal-add: #1a4a1a; --reveal-add-bg: #eaf5ea;
+  --reveal-del: #6b0000; --reveal-del-bg: #fef0f0;
+  --rule: 1.5px solid var(--ink); --rule-thin: 0.5px solid var(--ink-faint);
+  --serif: 'Playfair Display', Georgia, serif;
+  --body: 'Source Serif 4', Georgia, serif;
+  --mono: 'DM Mono', monospace;
+}
+html { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 16px; }
+body { min-height: 100vh; }
+
+/* MASTHEAD */
+.masthead { border-bottom: var(--rule); border-top: 4px solid var(--ink); padding: 1.5rem 2rem 1rem; text-align: center; background: var(--paper); }
+.masthead::after { content: ''; display: block; height: 2px; background: var(--ink); margin-top: 1rem; }
+.masthead-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; font-family: var(--mono); font-size: 0.68rem; color: var(--ink-light); letter-spacing: 0.08em; text-transform: uppercase; }
+.nameplate { font-family: var(--serif); font-size: clamp(2.5rem, 7vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--ink); }
+.nameplate em { font-style: italic; font-weight: 400; }
+.tagline { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-light); margin-top: 0.4rem; border-top: var(--rule-thin); border-bottom: var(--rule-thin); padding: 0.3rem 1.5rem; display: inline-block; }
+
+/* LAYOUT */
+.layout { max-width: 1160px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+.intro-band { border-bottom: var(--rule-thin); padding: 1.2rem 0; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
+.intro-band p { font-family: var(--body); font-size: 0.88rem; color: var(--ink-light); line-height: 1.6; font-style: italic; }
+.intro-band strong { color: var(--ink); font-style: normal; }
+.event-tag { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; background: var(--ink); color: var(--paper); padding: 0.3rem 0.7rem; white-space: nowrap; }
+
+/* QR BAND */
+.qr-band { display: flex; align-items: center; gap: 1.5rem; padding: 1rem 1.5rem; background: var(--paper-warm); border: var(--rule-thin); margin-top: 1.5rem; }
+.qr-band-text { flex: 1; }
+.qr-band-text h4 { font-family: var(--serif); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+.qr-band-text p { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-light); }
+#qr-code canvas, #qr-code img { display: block; }
+
+/* COLUMNS */
+.columns { display: grid; grid-template-columns: 380px 1fr; gap: 0; margin-top: 1.5rem; border: var(--rule-thin); }
+
+/* FORM PANEL */
+.form-panel { border-right: var(--rule); padding: 1.75rem; background: var(--paper-warm); }
+.form-panel h2 { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; margin-bottom: 0.2rem; }
+.form-panel .sub { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-light); margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: var(--rule-thin); }
+.field { margin-bottom: 1.1rem; }
+.field label { display: block; font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-light); margin-bottom: 0.35rem; }
+.field select, .field input[type="text"] { width: 100%; background: var(--paper); border: 0.5px solid var(--ink-faint); border-bottom: 1.5px solid var(--ink-mid); padding: 0.5rem 0.6rem; font-family: var(--body); font-size: 0.9rem; color: var(--ink); appearance: none; outline: none; border-radius: 0; transition: border-color 0.15s; }
+.field select:focus, .field input:focus { border-bottom-color: var(--accent); }
+.field input[type="text"]::placeholder { color: var(--ink-faint); font-style: italic; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.submit-btn { width: 100%; margin-top: 1.5rem; padding: 0.85rem 1rem; background: var(--ink); color: var(--paper); border: none; font-family: var(--serif); font-size: 1rem; font-style: italic; cursor: pointer; transition: background 0.15s; border-radius: 0; }
+.submit-btn:hover { background: var(--accent); }
+.submit-btn:disabled { background: var(--ink-faint); cursor: not-allowed; }
+
+/* DATA BROKER CARD */
+.broker-card { margin-top: 1.5rem; padding: 0.9rem; background: var(--ink); color: var(--paper); display: none; }
+.broker-card.visible { display: block; }
+.broker-header { font-family: var(--mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin-bottom: 0.6rem; border-bottom: 0.5px solid #444; padding-bottom: 0.4rem; line-height: 1.5; }
+.broker-header span { color: var(--accent); }
+.broker-row { font-family: var(--mono); font-size: 0.7rem; line-height: 1.8; color: #c8b89a; }
+.broker-row strong { color: #f5f0e8; font-weight: 500; }
+.broker-inferred { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 0.5px solid #444; font-family: var(--mono); font-size: 0.62rem; color: #888; font-style: italic; }
+.broker-inferred span { color: #c0392b; }
+
+/* ARTICLE PANEL */
+.article-panel { padding: 1.75rem 2rem; min-height: 500px; position: relative; }
+.placeholder-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 420px; gap: 1rem; opacity: 0.35; text-align: center; }
+.placeholder-state .p-icon { font-family: var(--serif); font-size: 3.5rem; font-style: italic; color: var(--ink-faint); }
+.placeholder-state p { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-faint); }
+
+/* LOADING */
+.loading-state { display: none; min-height: 420px; }
+.loading-state.visible { display: block; }
+.loading-bar-wrap { width: 100%; height: 2px; background: var(--paper-dark); margin-bottom: 2rem; overflow: hidden; }
+.loading-bar { height: 100%; background: var(--accent); width: 0%; animation: loadpulse 2.5s ease-in-out infinite; }
+@keyframes loadpulse { 0% { width:0%;opacity:1; } 60% { width:85%;opacity:1; } 100% { width:100%;opacity:0; } }
+.loading-line { height: 13px; background: var(--paper-dark); margin-bottom: 9px; animation: shimmer 1.5s ease-in-out infinite; }
+.loading-line.h1 { width: 55%; height: 26px; margin-bottom: 14px; }
+.loading-line.h2 { width: 80%; height: 17px; margin-bottom: 18px; }
+@keyframes shimmer { 0%,100%{opacity:0.4;} 50%{opacity:0.9;} }
+.loading-label { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-top: 1.5rem; padding-top: 1rem; border-top: var(--rule-thin); }
+.loading-label span { color: var(--accent); }
+
+/* ERROR */
+.error-state { display: none; padding: 1.5rem; border: 1px solid var(--accent); background: var(--accent-pale); margin: 1rem 0; }
+.error-state.visible { display: block; }
+.error-state p { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); line-height: 1.6; }
+
+/* ARTICLE CONTENT */
+.article-content { display: none; animation: fadeIn 0.6s ease; }
+.article-content.visible { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:none;} }
+.article-section-label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-light); border-bottom: var(--rule-thin); padding-bottom: 0.4rem; margin-bottom: 1rem; }
+.article-kicker { font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 0.6rem; }
+.article-headline { font-family: var(--serif); font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; line-height: 1.2; margin-bottom: 0.75rem; }
+.article-deck { font-family: var(--body); font-size: 1.05rem; line-height: 1.55; color: var(--ink-mid); font-style: italic; margin-bottom: 1.2rem; padding-bottom: 1rem; border-bottom: var(--rule-thin); }
+.article-byline { display: flex; gap: 2rem; font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-light); margin-bottom: 1.4rem; flex-wrap: wrap; }
+.article-body { font-family: var(--body); font-size: 0.98rem; line-height: 1.8; color: var(--ink-mid); columns: 2; column-gap: 2rem; }
+.article-body p { margin-bottom: 0.9em; }
+.article-body p:first-child::first-letter { float: left; font-family: var(--serif); font-size: 3.8em; line-height: 0.75; padding-right: 0.08em; padding-top: 0.05em; color: var(--ink); font-weight: 700; }
+
+/* REVEAL MODE TOGGLE */
+.reveal-toggle-bar { display: none; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding: 0.7rem 1rem; background: var(--paper-dark); border-left: 3px solid var(--accent); }
+.reveal-toggle-bar.visible { display: flex; }
+.reveal-toggle-bar label { font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-mid); cursor: pointer; }
+.toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider { position: absolute; inset: 0; background: var(--ink-faint); border-radius: 20px; cursor: pointer; transition: 0.2s; }
+.toggle-slider::before { content:''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+.toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); }
+.reveal-legend { display: none; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.reveal-legend.visible { display: flex; }
+.legend-item { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em; display: flex; align-items: center; gap: 0.4rem; }
+.legend-swatch { width: 12px; height: 12px; border-radius: 2px; }
+
+/* DIFF HIGHLIGHTS */
+.diff-add { background: var(--reveal-add-bg); color: var(--reveal-add); border-bottom: 1px solid var(--reveal-add); }
+.diff-neutral { background: none; }
+
+/* FINGERPRINT BAR */
+.fingerprint-bar { margin-top: 2rem; padding: 1rem 1.25rem; background: var(--paper-dark); border-top: 2px solid var(--ink); display: none; }
+.fingerprint-bar.visible { display: block; }
+.fp-label { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.5rem; }
+.fp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.fp-tag { font-family: var(--mono); font-size: 0.68rem; padding: 0.2rem 0.5rem; background: var(--paper); border: 0.5px solid var(--ink-faint); color: var(--ink-mid); }
+.fp-tag strong { color: var(--accent); font-weight: 500; }
+
+/* COMPARE SECTION */
+.compare-section { margin-top: 3rem; border-top: var(--rule); padding-top: 1.5rem; display: none; }
+.compare-section.visible { display: block; }
+.compare-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.5rem; }
+.compare-header h3 { font-family: var(--serif); font-size: 1rem; font-style: italic; font-weight: 400; }
+.compare-btn { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); background: none; border: none; cursor: pointer; text-decoration: underline; }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; background: var(--ink-faint); border: var(--rule-thin); }
+.compare-col { background: var(--paper-warm); padding: 1.2rem; }
+.compare-col:first-child { border-right: 0.5px solid var(--ink-faint); }
+.compare-col-label { font-family: var(--mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-light); margin-bottom: 0.8rem; padding-bottom: 0.5rem; border-bottom: var(--rule-thin); }
+.compare-col p { font-family: var(--body); font-size: 0.85rem; line-height: 1.7; color: var(--ink-mid); font-style: italic; }
+
+/* FOOTER */
+.footer-note { margin-top: 4rem; padding: 1.5rem; border: var(--rule-thin); background: var(--paper-warm); text-align: center; }
+.footer-note p { font-family: var(--mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-light); line-height: 1.8; }
+.footer-note strong { color: var(--ink); font-weight: 500; }
+
+@media (max-width: 820px) {
+  .columns { grid-template-columns: 1fr; }
+  .form-panel { border-right: none; border-bottom: var(--rule); }
+  .article-body { columns: 1; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .intro-band { grid-template-columns: 1fr; }
+  .qr-band { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-top">
+    <span id="live-date"></span>
+    <span>Algorithmic Edition</span>
+    <span>Vol. I &mdash; No. 1</span>
+  </div>
+  <div class="nameplate">THE <em>Mirror</em></div>
+  <div class="tagline">You are the algorithm &bull; Every reader, a different truth</div>
+</header>
+
+<div class="layout">
+
+  <div class="intro-band">
+    <p>One real event. Infinite versions of the same story. <strong>Declare your identity below</strong> — your version of today's article will be rewritten in real time by AI to match who you are. No two readers see the same text.</p>
+    <div class="event-tag">Live Demo · AI &amp; Democracy</div>
+  </div>
+
+  <!-- QR CODE BAND -->
+  <div class="qr-band">
+    <div id="qr-display" style="width:96px;height:96px;flex-shrink:0;background:var(--paper-dark);display:flex;align-items:center;justify-content:center;">
+      <span style="font-family:var(--mono);font-size:0.55rem;color:var(--ink-light);text-align:center;padding:4px;line-height:1.4;">Enter URL<br>below</span>
+    </div>
+    <div class="qr-band-text">
+      <h4>Scan to open on your phone</h4>
+      <p>Paste the URL where this file is hosted, generate the QR, and let the class scan in</p>
+      <div style="display:flex;gap:0.5rem;margin-top:0.6rem;align-items:center;">
+        <input type="text" id="qr-url-input" placeholder="https://your-url-here.com/mirror.html"
+          style="flex:1;font-family:var(--mono);font-size:0.68rem;padding:0.35rem 0.5rem;
+          border:0.5px solid var(--ink-faint);border-bottom:1.5px solid var(--ink-mid);
+          background:var(--paper);color:var(--ink);outline:none;border-radius:0;"
+          onkeydown="if(event.key==='Enter') buildQR()">
+        <button onclick="buildQR()" style="font-family:var(--mono);font-size:0.65rem;
+          text-transform:uppercase;letter-spacing:0.08em;padding:0.35rem 0.75rem;
+          background:var(--ink);color:var(--paper);border:none;cursor:pointer;white-space:nowrap;">
+          Generate QR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+
+    <!-- FORM -->
+    <div class="form-panel">
+      <h2>Your Reader Profile</h2>
+      <div class="sub">This data personalizes your article in real time</div>
+
+      <div class="field">
+        <label>First name</label>
+        <input type="text" id="fname" placeholder="Enter your first name">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Gender</label>
+          <select id="gender">
+            <option value="">—</option>
+            <option>Woman</option><option>Man</option>
+            <option>Non-binary</option><option>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Age group</label>
+          <select id="age">
+            <option value="">—</option>
+            <option>18–24</option><option>25–34</option>
+            <option>35–49</option><option>50–64</option><option>65+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Country / Region</label>
+        <select id="country">
+          <option value="">— Select —</option>
+          <optgroup label="Africa">
+            <option>Algeria</option><option>Angola</option><option>Cameroon</option>
+            <option>DR Congo</option><option>Egypt</option><option>Ethiopia</option>
+            <option>Ghana</option><option>Ivory Coast</option><option>Kenya</option>
+            <option>Morocco</option><option>Mozambique</option><option>Nigeria</option>
+            <option>Senegal</option><option>South Africa</option><option>Sudan</option>
+            <option>Tanzania</option><option>Tunisia</option><option>Uganda</option>
+            <option>Zimbabwe</option>
+          </optgroup>
+          <optgroup label="Americas">
+            <option>Argentina</option><option>Bolivia</option><option>Brazil</option>
+            <option>Canada</option><option>Chile</option><option>Colombia</option>
+            <option>Cuba</option><option>Ecuador</option><option>Haiti</option>
+            <option>Mexico</option><option>Peru</option><option>United States</option>
+            <option>Venezuela</option>
+          </optgroup>
+          <optgroup label="Asia & Pacific">
+            <option>Afghanistan</option><option>Australia</option><option>Bangladesh</option>
+            <option>Cambodia</option><option>China</option><option>India</option>
+            <option>Indonesia</option><option>Iran</option><option>Iraq</option>
+            <option>Israel</option><option>Japan</option><option>Malaysia</option>
+            <option>Myanmar</option><option>New Zealand</option><option>North Korea</option>
+            <option>Pakistan</option><option>Palestine</option><option>Philippines</option>
+            <option>Saudi Arabia</option><option>Singapore</option><option>South Korea</option>
+            <option>Sri Lanka</option><option>Syria</option><option>Taiwan</option>
+            <option>Thailand</option><option>Turkey</option><option>UAE</option>
+            <option>Vietnam</option><option>Yemen</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option>Austria</option><option>Belarus</option><option>Belgium</option>
+            <option>Czech Republic</option><option>Denmark</option><option>Finland</option>
+            <option>France</option><option>Germany</option><option>Greece</option>
+            <option>Hungary</option><option>Ireland</option><option>Italy</option>
+            <option>Netherlands</option><option>Norway</option><option>Poland</option>
+            <option>Portugal</option><option>Romania</option><option>Russia</option>
+            <option>Serbia</option><option>Spain</option><option>Sweden</option>
+            <option>Switzerland</option><option>Ukraine</option><option>United Kingdom</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Religion</label>
+        <select id="religion">
+          <option value="">— Select or prefer not to say —</option>
+          <option>Christianity (Catholic)</option>
+          <option>Christianity (Protestant)</option>
+          <option>Christianity (Orthodox)</option>
+          <option>Christianity (Evangelical)</option>
+          <option>Islam (Sunni)</option>
+          <option>Islam (Shia)</option>
+          <option>Judaism</option>
+          <option>Hinduism</option>
+          <option>Buddhism</option>
+          <option>Sikhism</option>
+          <option>Atheist / No religion</option>
+          <option>Agnostic</option>
+          <option>Traditional / Indigenous beliefs</option>
+          <option>Other</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Political leaning</label>
+        <select id="politics">
+          <option value="">— Select —</option>
+          <option>Far left</option><option>Centre left</option><option>Centrist</option>
+          <option>Centre right</option><option>Far right</option>
+          <option>Libertarian</option><option>Green / Ecologist</option>
+          <option>Nationalist</option><option>Apolitical</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Education level</label>
+        <select id="education">
+          <option value="">— Select —</option>
+          <option>No diploma</option><option>High school</option>
+          <option>Vocational / Trade</option><option>Bachelor's degree</option>
+          <option>Master's degree</option><option>PhD / Doctorate</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Primary news source</label>
+        <select id="newssource">
+          <option value="">— Select —</option>
+          <option>Television</option><option>Print newspapers</option>
+          <option>Social media</option><option>Online news sites</option>
+          <option>Podcasts / Radio</option><option>Word of mouth</option>
+          <option>I don't follow news</option>
+        </select>
+      </div>
+
+      <button class="submit-btn" id="generate-btn" onclick="generateArticle()">Generate my article →</button>
+
+      <!-- DATA BROKER CARD -->
+      <div class="broker-card" id="broker-card">
+        <div class="broker-header">⬡ <span>Platform data log</span> — visible to advertisers</div>
+        <div class="broker-row" id="broker-rows"></div>
+        <div class="broker-inferred" id="broker-inferred"></div>
+      </div>
+    </div>
+
+    <!-- ARTICLE PANEL -->
+    <div class="article-panel">
+
+      <div class="placeholder-state" id="placeholder">
+        <div class="p-icon">&ldquo;</div>
+        <p>Your personalized article<br>will appear here</p>
+      </div>
+
+      <div class="loading-state" id="loading">
+        <div class="loading-bar-wrap"><div class="loading-bar"></div></div>
+        <div style="padding:0 0.5rem">
+          <div class="loading-line h1"></div>
+          <div class="loading-line h2"></div>
+          <div class="loading-line" style="width:100%"></div>
+          <div class="loading-line" style="width:95%"></div>
+          <div class="loading-line" style="width:98%"></div>
+          <div class="loading-line" style="width:88%"></div>
+          <div class="loading-line" style="width:65%"></div>
+        </div>
+        <div class="loading-label">Rewriting for <span id="loading-identity">your profile</span>…</div>
+      </div>
+
+      <div class="error-state" id="error-state">
+        <p id="error-msg">An error occurred.</p>
+        <div id="setup-instructions" style="display:none;margin-top:1rem;padding:1rem;
+          background:var(--paper-warm);border-left:3px solid var(--ink);font-family:var(--mono);
+          font-size:0.68rem;line-height:2;color:var(--ink-mid);">
+          <strong style="color:var(--ink);display:block;margin-bottom:0.4rem;">
+            How to run this demo locally:
+          </strong>
+          1. Download <strong>mirror_v2.html</strong><br>
+          2. Open a terminal in the same folder<br>
+          3. Run: <strong style="color:var(--accent);">python3 -m http.server 8080</strong><br>
+          4. Open <strong style="color:var(--accent);">http://localhost:8080/mirror_v2.html</strong> in Chrome<br>
+          <br>
+          Or upload to <strong>tiiny.host</strong> for a public URL in 30 seconds.
+        </div>
+      </div>
+
+      <!-- REVEAL TOGGLE -->
+      <div class="reveal-toggle-bar" id="reveal-toggle-bar">
+        <label class="toggle-switch">
+          <input type="checkbox" id="reveal-toggle" onchange="toggleRevealMode()">
+          <span class="toggle-slider"></span>
+        </label>
+        <label for="reveal-toggle">Reveal mode — highlight AI personalization</label>
+      </div>
+      <div class="reveal-legend" id="reveal-legend">
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--reveal-add-bg);border:1px solid var(--reveal-add)"></div>
+          <span style="font-family:var(--mono);font-size:0.62rem;color:var(--reveal-add)">Personalized phrasing</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--paper-dark);border:1px solid var(--ink-faint)"></div>
+          <span style="font-family:var(--mono);font-size:0.62rem;color:var(--ink-light)">Neutral baseline</span>
+        </div>
+      </div>
+
+      <div class="article-content" id="article-content">
+        <div class="article-section-label" id="art-section-label">Breaking News — Personalized Edition</div>
+        <div class="article-kicker" id="art-kicker"></div>
+        <h1 class="article-headline" id="art-headline"></h1>
+        <p class="article-deck" id="art-deck"></p>
+        <div class="article-byline">
+          <span>The Mirror Staff</span>
+          <span id="art-date"></span>
+          <span id="art-readingtime"></span>
+        </div>
+        <div class="article-body" id="art-body"></div>
+      </div>
+
+      <div class="fingerprint-bar" id="fp-bar">
+        <div class="fp-label">⬡ Personalization fingerprint — visible to platform, invisible to you</div>
+        <div class="fp-tags" id="fp-tags"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE -->
+  <div class="compare-section" id="compare-section">
+    <div class="compare-header">
+      <h3>The same opening paragraph, rewritten for two opposite profiles</h3>
+      <button class="compare-btn" onclick="generateCompare()">Regenerate →</button>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-col">
+        <div class="compare-col-label" id="cmp-label-a">Your profile</div>
+        <p id="cmp-text-a">—</p>
+      </div>
+      <div class="compare-col">
+        <div class="compare-col-label" id="cmp-label-b">Mirror profile</div>
+        <p id="cmp-text-b">—</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <p>
+      <strong>This is a demonstration.</strong> The Mirror is a conceptual tool for the course <em>AI &amp; Democracy.</em><br>
+      All articles are AI-generated. The event seed is real; every framing is synthetic and personalized.<br>
+      <strong>The same mechanism operates silently in every algorithmic feed you read.</strong>
+    </p>
+  </div>
+
+</div>
+
+<script>
+const NEWS_EVENT = {
+  event: "The European Union's AI Act has entered into force — the world's first comprehensive legal framework regulating artificial intelligence. It classifies AI systems by risk level and bans certain uses outright, including social scoring by governments, most real-time facial recognition in public spaces, and subliminal manipulation. High-risk AI in hiring, credit scoring, and border control faces strict auditing requirements.",
+  kicker: "Regulation & Technology · Europe / Global"
+};
+
+document.getElementById('live-date').textContent =
+  new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+document.getElementById('art-date').textContent =
+  new Date().toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+
+// QR code pointing to current page URL
+function buildQR() {
+  const url = document.getElementById('qr-url-input').value.trim();
+  if (!url) {
+    alert('Please paste the URL where this file is hosted first.');
+    return;
+  }
+  const display = document.getElementById('qr-display');
+  display.innerHTML = '<span style="font-family:var(--mono);font-size:0.55rem;color:var(--ink-light);">Loading…</span>';
+  // Use Google Charts QR API — no library needed, just an img tag
+  const encoded = encodeURIComponent(url);
+  const img = new Image();
+  img.onload = () => {
+    display.innerHTML = '';
+    img.style.cssText = 'width:96px;height:96px;display:block;image-rendering:pixelated;';
+    display.appendChild(img);
+  };
+  img.onerror = () => {
+    display.innerHTML = '<span style="font-family:var(--mono);font-size:0.55rem;color:var(--accent);text-align:center;padding:4px;line-height:1.4;">Could not load QR — check your internet connection</span>';
+  };
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=96x96&data=' + encoded + '&color=1a1208&bgcolor=ede8dc';
+}
+
+let lastProfile = null;
+let lastParsed = null;
+let neutralBody = null; // cached neutral version for diff
+
+function buildProfile() {
+  return {
+    name: document.getElementById('fname').value.trim(),
+    gender: document.getElementById('gender').value,
+    age: document.getElementById('age').value,
+    country: document.getElementById('country').value,
+    religion: document.getElementById('religion').value,
+    politics: document.getElementById('politics').value,
+    education: document.getElementById('education').value,
+    newssource: document.getElementById('newssource').value,
+  };
+}
+
+function profileLabel(p) {
+  return [p.name, p.gender, p.age, p.country, p.religion, p.politics, p.education]
+    .filter(Boolean).join(' · ') || 'Unknown profile';
+}
+
+function showBrokerCard(profile) {
+  const card = document.getElementById('broker-card');
+  const rows = document.getElementById('broker-rows');
+  const inferred = document.getElementById('broker-inferred');
+
+  const fields = [
+    ['Name', profile.name],
+    ['Gender', profile.gender],
+    ['Age', profile.age],
+    ['Country', profile.country],
+    ['Religion', profile.religion],
+    ['Politics', profile.politics],
+    ['Education', profile.education],
+    ['News source', profile.newssource],
+  ].filter(([, v]) => v);
+
+  rows.innerHTML = fields.map(([k, v]) =>
+    `<strong>${k}:</strong> ${v}<br>`
+  ).join('');
+
+  // Generate inferred signals
+  const inferredItems = [];
+  if (profile.name) inferredItems.push(`Likely ethnicity from name: <span>inferred</span>`);
+  if (profile.religion && profile.politics) inferredItems.push(`Value alignment score: <span>computed</span>`);
+  if (profile.country && profile.education) inferredItems.push(`Economic segment: <span>estimated</span>`);
+  if (profile.newssource === 'Social media') inferredItems.push(`Virality susceptibility: <span>high</span>`);
+  if (profile.politics === 'Far left' || profile.politics === 'Far right') inferredItems.push(`Radicalization proximity flag: <span>logged</span>`);
+  inferredItems.push(`Ad targeting categories: <span>${Math.floor(Math.random()*180)+40} matched</span>`);
+
+  inferred.innerHTML = 'Inferred signals: ' + inferredItems.join(' &nbsp;|&nbsp; ');
+  card.classList.add('visible');
+}
+
+function buildPrompt(profile, shortMode) {
+  const identityParts = [];
+  if (profile.name) identityParts.push(`First name: ${profile.name}`);
+  if (profile.gender) identityParts.push(`Gender: ${profile.gender}`);
+  if (profile.age) identityParts.push(`Age group: ${profile.age}`);
+  if (profile.country) identityParts.push(`Country: ${profile.country}`);
+  if (profile.religion) identityParts.push(`Religion: ${profile.religion}`);
+  if (profile.politics) identityParts.push(`Political leaning: ${profile.politics}`);
+  if (profile.education) identityParts.push(`Education: ${profile.education}`);
+  if (profile.newssource) identityParts.push(`Primary news source: ${profile.newssource}`);
+  const identity = identityParts.length
+    ? identityParts.join('; ')
+    : 'No personal information provided';
+
+  if (shortMode) {
+    return `This is an academic research tool for a university course on AI and democracy. Its purpose is to make algorithmic personalization legible to students by showing, transparently and explicitly, how the same news event can be framed differently for different audiences.
+
+Task: Write one short introductory paragraph (under 80 words) covering this news event:
+"${NEWS_EVENT.event}"
+
+The paragraph should be written with a communication style and framing appropriate for a reader with this background: ${identity}
+
+This means adapting: vocabulary level, which aspect of the story is mentioned first, what analogy or reference point is used. All facts must remain accurate. This is a scholarly demonstration of framing theory and media literacy — the output will be shown alongside other versions to make the differences visible and discussable.
+
+Return only the paragraph text, nothing else.`;
+  }
+
+  return `This is an academic research tool built for a university course on AI, media, and democracy. Its explicit pedagogical purpose is to demonstrate how algorithmic personalization works by generating transparent, side-by-side examples of the same news event framed for different audience profiles. Students will see multiple versions simultaneously to analyze how framing, vocabulary, and emphasis shift — making the usually invisible process of content personalization visible and critically discussable.
+
+News event to cover (all facts must be accurate):
+"${NEWS_EVENT.event}"
+
+Reader background for this version: ${identity}
+
+Please write a news article about this event. Adapt the following to suit the reader's likely background and communication context:
+- Vocabulary complexity and sentence structure
+- Which aspect of the story is most prominently featured (e.g. economic impact, civil liberties, national competitiveness, technological progress)
+- What analogy or comparison is used to explain the AI Act
+- Which type of stakeholder perspective is centered (workers, businesses, governments, citizens, technologists)
+- The overall tone (cautious and analytical vs optimistic vs concerned)
+
+All facts must be accurate. The adaptation should reflect realistic journalistic choices — the kind a thoughtful editor might make when writing for a specific publication's audience.
+
+Also write a single neutral baseline paragraph — purely factual, no framing choices — for comparison.
+
+Respond with valid JSON only, no markdown, no explanation before or after:
+{
+  "headline": "article headline",
+  "deck": "one-sentence subheadline",
+  "body": "4-5 paragraphs separated by \\n\\n",
+  "inferred_topic": "the news topic category that best fits this reader, in 3-5 words (e.g. Civil Liberties & Surveillance, Economic Competitiveness, Tech Governance)",
+  "neutral_first_para": "neutral factual baseline paragraph",
+  "personalization_notes": ["3 brief notes on what editorial choices were made and why"]
+}`;
+}
+
+async function callClaude(prompt) {
+  // Detect if we are running via the local proxy server (server.py)
+  const useProxy = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const url = useProxy
+    ? 'http://localhost:8080/api'
+    : 'https://api.anthropic.com/v1/messages';
+
+  const headers = useProxy
+    ? { "Content-Type": "application/json" }
+    : { "Content-Type": "application/json", "anthropic-beta": "claude-ai-web-app-2025-04-14" };
+
+  let r;
+  try {
+    r = await fetch(url, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1200,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+  } catch(fetchErr) {
+    throw new Error(
+      "Cannot connect to the API. Run the included server.py to fix this: " +
+      "open Terminal, drag server.py into it, press Enter. " +
+      "Then open http://localhost:8080 in Safari."
+    );
+  }
+  if (!r.ok) {
+    const e = await r.json().catch(()=>({}));
+    throw new Error(e?.error?.message || "HTTP " + r.status);
+  }
+  const d = await r.json();
+  return d.content.map(b => b.text||'').join('');
+}
+
+async function generateArticle() {
+  const profile = buildProfile();
+  const filled = Object.values(profile).filter(Boolean);
+  if (filled.length < 2) {
+    alert("Please fill in at least two profile fields to personalize your article.");
+    return;
+  }
+
+  lastProfile = profile;
+  document.getElementById('generate-btn').disabled = true;
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('article-content').classList.remove('visible');
+  document.getElementById('fp-bar').classList.remove('visible');
+  document.getElementById('compare-section').classList.remove('visible');
+  document.getElementById('error-state').classList.remove('visible');
+  document.getElementById('reveal-toggle-bar').classList.remove('visible');
+  document.getElementById('reveal-legend').classList.remove('visible');
+  document.getElementById('reveal-toggle').checked = false;
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('loading-identity').textContent =
+    [profile.name, profile.politics, profile.country].filter(Boolean).join(', ') || 'your profile';
+
+  showBrokerCard(profile);
+
+  try {
+    const raw = await callClaude(buildPrompt(profile, false));
+    // Robustly extract JSON — find outermost { } regardless of surrounding text
+    let parsed;
+    try {
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("No JSON object found in response: " + raw.slice(0,300));
+      parsed = JSON.parse(jsonMatch[0]);
+    } catch(e) {
+      throw new Error("JSON parse failed: " + e.message + " | Raw: " + raw.slice(0,300));
+    }
+
+    lastParsed = parsed;
+    neutralBody = parsed.neutral_first_para || null;
+    renderArticle(parsed, profile);
+  } catch(err) {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('error-state').classList.add('visible');
+    const isNetworkErr = err.message.includes('Cannot reach') || err.message.includes('Network error') || err.message.includes('Failed to fetch');
+    document.getElementById('error-msg').innerHTML = "<strong>Error:</strong> " + err.message;
+    if (isNetworkErr) {
+      document.getElementById('setup-instructions').style.display = 'block';
+    }
+  } finally {
+    document.getElementById('generate-btn').disabled = false;
+  }
+}
+
+function renderArticle(data, profile) {
+  document.getElementById('loading').classList.remove('visible');
+  const inferredTopic = data.inferred_topic || '';
+  if (inferredTopic) {
+    document.getElementById('art-section-label').textContent = inferredTopic.toUpperCase();
+  }
+  if (data.inferred_topic) document.getElementById('art-section-label').textContent = data.inferred_topic.toUpperCase();
+  document.getElementById('art-kicker').textContent = NEWS_EVENT.kicker;
+  document.getElementById('art-headline').textContent = data.headline || '';
+  document.getElementById('art-deck').textContent = data.deck || '';
+  document.getElementById('art-readingtime').textContent =
+    '~' + Math.ceil((data.body||'').split(' ').length / 200) + ' min read';
+
+  const bodyEl = document.getElementById('art-body');
+  bodyEl.innerHTML = '';
+  (data.body||'').split('\n\n').forEach(para => {
+    if (para.trim()) {
+      const p = document.createElement('p');
+      p.textContent = para.trim();
+      bodyEl.appendChild(p);
+    }
+  });
+
+  document.getElementById('article-content').classList.add('visible');
+  document.getElementById('reveal-toggle-bar').classList.add('visible');
+
+  // Fingerprint
+  if (data.personalization_notes?.length) {
+    const fpTags = document.getElementById('fp-tags');
+    fpTags.innerHTML = '';
+    Object.entries(profile).forEach(([k,v]) => {
+      if (v) {
+        const tag = document.createElement('span');
+        tag.className = 'fp-tag';
+        tag.innerHTML = `<strong>${k}</strong>: ${v}`;
+        fpTags.appendChild(tag);
+      }
+    });
+    data.personalization_notes.forEach(note => {
+      const tag = document.createElement('span');
+      tag.className = 'fp-tag';
+      tag.style.borderColor = 'var(--accent)';
+      tag.style.color = 'var(--accent)';
+      tag.textContent = '⬡ ' + note;
+      fpTags.appendChild(tag);
+    });
+    document.getElementById('fp-bar').classList.add('visible');
+  }
+
+  document.getElementById('compare-section').classList.add('visible');
+  generateCompare();
+}
+
+function toggleRevealMode() {
+  const on = document.getElementById('reveal-toggle').checked;
+  const legend = document.getElementById('reveal-legend');
+  legend.classList.toggle('visible', on);
+
+  const bodyEl = document.getElementById('art-body');
+  const paras = bodyEl.querySelectorAll('p');
+
+  if (!on) {
+    // Remove all highlights
+    paras.forEach(p => { p.innerHTML = p.textContent; });
+    return;
+  }
+
+  if (!neutralBody || !lastParsed) return;
+
+  // For the first paragraph, highlight sentences that differ from neutral version
+  // For subsequent paragraphs, highlight key "loaded" phrases using personalization notes
+  const notes = lastParsed.personalization_notes || [];
+  const keywords = extractKeywords(notes);
+
+  paras.forEach((p, i) => {
+    if (i === 0 && neutralBody) {
+      // Sentence-level diff on first paragraph
+      p.innerHTML = highlightDiff(p.textContent, neutralBody, keywords);
+    } else {
+      // Keyword highlight on other paragraphs
+      p.innerHTML = highlightKeywords(p.textContent, keywords);
+    }
+  });
+}
+
+function extractKeywords(notes) {
+  // Extract meaningful phrases from personalization notes to highlight
+  const stop = new Set(['the','a','an','of','to','in','for','and','or','is','are','was','were','be','been','this','that','with','from','by','on','at','as','it','its','which','who','how','what','more','less','also','their','they','them','these','those']);
+  const words = notes.join(' ').toLowerCase().split(/\W+/).filter(w => w.length > 4 && !stop.has(w));
+  return [...new Set(words)].slice(0, 12);
+}
+
+function highlightDiff(personalized, neutral, keywords) {
+  const pWords = personalized.split(/\s+/);
+  const nWords = new Set(neutral.toLowerCase().split(/\s+/).map(w => w.replace(/[^a-z]/g,'')));
+
+  return pWords.map(word => {
+    const clean = word.toLowerCase().replace(/[^a-z]/g,'');
+    if (keywords.some(k => clean.includes(k) || k.includes(clean)) && clean.length > 3) {
+      return `<span class="diff-add">${word}</span>`;
+    }
+    if (!nWords.has(clean) && clean.length > 5 && Math.random() > 0.6) {
+      return `<span class="diff-add">${word}</span>`;
+    }
+    return word;
+  }).join(' ');
+}
+
+function highlightKeywords(text, keywords) {
+  if (!keywords.length) return text;
+  let result = text;
+  keywords.forEach(kw => {
+    const re = new RegExp(`(${kw}\\w*)`, 'gi');
+    result = result.replace(re, '<span class="diff-add">$1</span>');
+  });
+  return result;
+}
+
+async function generateCompare() {
+  if (!lastProfile) return;
+  const pA = lastProfile;
+
+  const politicsMirror = {
+    'Far left':'Far right','Centre left':'Centre right','Centrist':'Far left',
+    'Far right':'Far left','Centre right':'Centre left','Libertarian':'Nationalist',
+    'Green / Ecologist':'Far right','Nationalist':'Far left','Apolitical':'Far right'
+  };
+  const countryMirror = {
+    'United States':'Nigeria','France':'Brazil','Germany':'India',
+    'United Kingdom':'China','Australia':'Pakistan','Japan':'Iran',
+    'Netherlands':'Ethiopia','Canada':'Bangladesh','default':'Nigeria'
+  };
+  const religionMirror = (r) => {
+    if (!r || r.includes('Prefer') || r.includes('Other')) return 'Islam (Sunni)';
+    if (r.includes('Atheist') || r.includes('Agnostic')) return 'Christianity (Evangelical)';
+    if (r.includes('Islam')) return 'Atheist / No religion';
+    if (r.includes('Christianity')) return 'Islam (Sunni)';
+    return 'Atheist / No religion';
+  };
+
+  const pB = {
+    name: '',
+    gender: pA.gender === 'Man' ? 'Woman' : 'Man',
+    age: (pA.age === '18–24' || pA.age === '25–34') ? '65+' : '18–24',
+    country: countryMirror[pA.country] || countryMirror['default'],
+    religion: religionMirror(pA.religion),
+    politics: politicsMirror[pA.politics] || 'Far right',
+    education: pA.education === 'PhD / Doctorate' ? 'High school' : 'PhD / Doctorate',
+    newssource: pA.newssource === 'Social media' ? 'Print newspapers' : 'Social media',
+  };
+
+  document.getElementById('cmp-label-a').textContent = profileLabel(pA);
+  document.getElementById('cmp-label-b').textContent = 'Mirror: ' + profileLabel(pB);
+  document.getElementById('cmp-text-a').textContent = 'Generating…';
+  document.getElementById('cmp-text-b').textContent = 'Generating…';
+
+  try {
+    const tA = await callClaude(buildComparePrompt(pA));
+    document.getElementById('cmp-text-a').textContent = tA.trim();
+  } catch(e) {
+    document.getElementById('cmp-text-a').textContent = 'Error: ' + e.message;
+  }
+  try {
+    const tB = await callClaude(buildComparePrompt(pB));
+    document.getElementById('cmp-text-b').textContent = tB.trim();
+  } catch(e) {
+    document.getElementById('cmp-text-b').textContent = 'Error: ' + e.message;
+  }
+}
+
+function buildComparePrompt(profile) {
+  const parts = [];
+  if (profile.name) parts.push('First name: ' + profile.name);
+  if (profile.gender) parts.push('Gender: ' + profile.gender);
+  if (profile.age) parts.push('Age: ' + profile.age);
+  if (profile.country) parts.push('Country: ' + profile.country);
+  if (profile.religion) parts.push('Religion: ' + profile.religion);
+  if (profile.politics) parts.push('Politics: ' + profile.politics);
+  if (profile.education) parts.push('Education: ' + profile.education);
+  if (profile.newssource) parts.push('News source: ' + profile.newssource);
+  const identity = parts.join('; ') || 'general reader';
+
+  return `This is an academic demonstration for a university course on AI and democracy, showing how the same news event is framed differently for different reader profiles.
+
+News event: "${NEWS_EVENT.event}"
+
+Reader profile: ${identity}
+
+Write one opening paragraph (60-80 words) for a news article about this event, adapted in framing, vocabulary, and emphasis for a reader with this background. All facts must be accurate. Write in English only. Return only the paragraph text, nothing else.`;
+}</script>
+</body>
+</html>
